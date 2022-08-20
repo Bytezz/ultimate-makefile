@@ -1,0 +1,29 @@
+Name:       
+Version:    
+Release:    0
+Summary:    
+Source0:    
+BuildArch:  
+License:    GPLv3+
+Requires:   gtk3
+
+%description
+Show current time or a timer.
+
+%prep
+%setup -q
+
+%build
+make
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT prefix=/usr
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+
+%changelog
+

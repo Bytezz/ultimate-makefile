@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=
+GenericName=Hello World
+Comment=
+Exec=
+Terminal=false
+Type=Application
+Icon=
+Categories=GNOME;GTK;Test;
+Keywords=hello;world;greet;test;
+X-Purism-FormFactor=Workstation;Mobile;
