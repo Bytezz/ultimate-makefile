@@ -144,7 +144,7 @@ dist-app: all
 	mkdir $(program_name).AppDir
 	$(MAKE) DESTDIR=./$(program_name).AppDir install
 	# Setting AppImage icon
-	$(INSTALL_DATA) data/icons/$(program_name).svg $(program_name).AppDir/$(program_name).svg
+	$(INSTALL_DATA) data/icons/hicolor/scalable/apps/$(program_name).svg $(program_name).AppDir/$(program_name).svg
 	# Setting AppImage launcher
 	$(INSTALL_DATA) data/$(program_id).desktop $(program_name).AppDir/$(program_name).desktop
 	sed -i "s/Name=/Name=$(program_name)/" $(program_name).AppDir/$(program_name).desktop
