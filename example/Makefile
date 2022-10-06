@@ -10,9 +10,7 @@ program_id    = com.github.bytezz.greets
 program       = greets
 package_name  = greets
 description   = Greets the user
-version_major = 0
-version_minor = 0
-version_patch = 0
+program_version = 0.0.0
 
 CC ?= gcc
 
@@ -32,8 +30,8 @@ datarootdir = $(prefix)/share
 datadir = $(datarootdir)/$(program_name)
 docdir = $(datarootdir)/doc/$(program_name)
 sysconfdir = /etc
-hicolor = /usr/share/icons/hicolor
-applications = /usr/share/applications
+hicolordir = /usr/share/icons/hicolor
+applicationsdir = /usr/share/applications
 
 all:
 	$(CC) -o $(program) $(srcdir)/main.c `pkg-config --cflags --libs gtk+-3.0`
@@ -42,16 +40,16 @@ install:
 	# Executable $(DESTDIR)$(bindir)
 	$(INSTALL_PROGRAM) $(program) $(DESTDIR)$(bindir)/$(program)
 	
-	# Launcher $(DESTDIR)$(applications)
-	$(INSTALL_DATA) data/$(program_id).desktop $(DESTDIR)$(applications)/$(program_id).desktop
-	sed -i "s/Name=/Name=$(program_name)/" $(DESTDIR)$(applications)/$(program_id).desktop
-	sed -i "s/Comment=/Comment=$(description)/" $(DESTDIR)$(applications)/$(program_id).desktop
-	sed -i "s/Exec=/Exec=$(program)/" $(DESTDIR)$(applications)/$(program_id).desktop
-	sed -i "s/Icon=/Icon=$(program_name)/" $(DESTDIR)$(applications)/$(program_id).desktop
+	# Launcher $(DESTDIR)$(applicationsdir)
+	$(INSTALL_DATA) data/$(program_id).desktop $(DESTDIR)$(applicationsdir)/$(program_id).desktop
+	sed -i "s/Name=/Name=$(program_name)/" $(DESTDIR)$(applicationsdir)/$(program_id).desktop
+	sed -i "s/Comment=/Comment=$(description)/" $(DESTDIR)$(applicationsdir)/$(program_id).desktop
+	sed -i "s/Exec=/Exec=$(program)/" $(DESTDIR)$(applicationsdir)/$(program_id).desktop
+	sed -i "s/Icon=/Icon=$(program_name)/" $(DESTDIR)$(applicationsdir)/$(program_id).desktop
 	
-	# Icons $(DESTDIR)$(hicolor)
-	$(INSTALL_DATA) data/icons/hicolor/scalable/apps/$(program_name).svg $(DESTDIR)$(hicolor)/scalable/apps/$(program_name).svg
-	$(INSTALL_DATA) data/icons/hicolor/symbolic/apps/$(program_name)-symbolic.svg $(DESTDIR)$(hicolor)/symbolic/apps/$(program_name)-symbolic.svg
+	# Icons $(DESTDIR)$(hicolordir)
+	$(INSTALL_DATA) data/icons/hicolor/scalable/apps/$(program_name).svg $(DESTDIR)$(hicolordir)/scalable/apps/$(program_name).svg
+	$(INSTALL_DATA) data/icons/hicolor/symbolic/apps/$(program_name)-symbolic.svg $(DESTDIR)$(hicolordir)/symbolic/apps/$(program_name)-symbolic.svg
 	
 	# Software data $(DESTDIR)$(datadir)
 	
@@ -61,9 +59,9 @@ install:
 
 uninstall:
 	rm -rf $(DESTDIR)$(bindir)/$(program)
-	rm -rf $(DESTDIR)$(applications)/$(program_id).desktop
-	rm -rf $(DESTDIR)$(hicolor)/scalable/apps/$(program_name).svg
-	rm -rf $(DESTDIR)$(hicolor)/symbolic/apps/$(program_name)-symbolic.svg
+	rm -rf $(DESTDIR)$(applicationsdir)/$(program_id).desktop
+	rm -rf $(DESTDIR)$(hicolordir)/scalable/apps/$(program_name).svg
+	rm -rf $(DESTDIR)$(hicolordir)/symbolic/apps/$(program_name)-symbolic.svg
 	rm -rf $(DESTDIR)$(datadir)
 	rm -rf $(DESTDIR)$(docdir)
 
@@ -72,8 +70,8 @@ install-user:
 	$(MAKE) \
 		prefix=~/.local \
 		sysconfdir=~/.config \
-		hicolor=~/.local/share/icons/hicolor \
-		applications=~/.local/share/applications \
+		hicolordir=~/.local/share/icons/hicolor \
+		applicationsdir=~/.local/share/applications \
 		install
 	sed -i "s/Exec=/Exec=~\/.local\/bin\//" ~/.local/share/applications/$(program_id).desktop
 
@@ -82,8 +80,8 @@ uninstall-user:
 	$(MAKE) \
 		prefix=~/.local \
 		sysconfdir=~/.config \
-		hicolor=~/.local/share/icons/hicolor \
-		applications=~/.local/share/applications \
+		hicolordir=~/.local/share/icons/hicolor \
+		applicationsdir=~/.local/share/applications \
 		uninstall
 
 clean:
@@ -96,11 +94,11 @@ clean:
 	rm -rf *.AppImage
 
 dist:
-	rm -rf $(TMPDIR)/$(program_name)-$(version_major).$(version_minor).$(version_patch)
-	cp -r . $(TMPDIR)/$(program_name)-$(version_major).$(version_minor).$(version_patch)
-	tar -cf $(program_name)-$(version_major).$(version_minor).$(version_patch).tar --directory=$(TMPDIR) $(program_name)-$(version_major).$(version_minor).$(version_patch)
-	gzip $(program_name)-$(version_major).$(version_minor).$(version_patch).tar
-	rm -rf $(TMPDIR)/$(program_name)-$(version_major).$(version_minor).$(version_patch)
+	rm -rf $(TMPDIR)/$(program_name)-$(program_version)
+	cp -r . $(TMPDIR)/$(program_name)-$(program_version)
+	tar -cf $(program_name)-$(program_version).tar --directory=$(TMPDIR) $(program_name)-$(program_version)
+	gzip $(program_name)-$(program_version).tar
+	rm -rf $(TMPDIR)/$(program_name)-$(program_version)
 
 dist-deb: all
 	rm -rf debian
@@ -109,10 +107,10 @@ dist-deb: all
 	mkdir debian/DEBIAN
 	cp build-aux/debiancontrol debian/DEBIAN/control
 	sed -i "s/Package: /Package: $(package_name)/" debian/DEBIAN/control
-	sed -i "s/Version: /Version: $(version_major).$(version_minor).$(version_patch)/" debian/DEBIAN/control
+	sed -i "s/Version: /Version: $(program_version)/" debian/DEBIAN/control
 	sed -i "s/Architecture: /Architecture: `uname -m | sed "s/x86_64/amd64/" | sed "s/aarch64/arm64/"`/" debian/DEBIAN/control
 	sed -i "s/Description: /Description: $(program_name)\n $(description)/" debian/DEBIAN/control
-	dpkg-deb -b debian $(program_name)-$(version_major).$(version_minor).$(version_patch)-`uname -m`.deb
+	dpkg-deb -b debian $(program_name)-$(program_version)-`uname -m`.deb
 
 dist-rpm: dist
 	# Creating rpm build dir
@@ -125,16 +123,16 @@ dist-rpm: dist
 	mkdir rpmbuild/SPECS
 	mkdir rpmbuild/SRPMS
 	# Importing source code inside sources
-	mv $(program_name)-$(version_major).$(version_minor).$(version_patch).tar.gz rpmbuild/SOURCES
+	mv $(program_name)-$(program_version).tar.gz rpmbuild/SOURCES
 	# Updating release number
 	awk 'BEGIN{ FS=OFS="  " } /Release:    /{ match($$NF, /^[0-9]+/); $$NF=($$NF+1) substr($$NF, RLENGTH+1) }1' build-aux/rpmspec > $(TMPDIR)/rpmspec && cat $(TMPDIR)/rpmspec > build-aux/rpmspec
 	# Copying rpm spec inside rpm build dir
 	cp build-aux/rpmspec rpmbuild/SPECS/$(program_name).spec
 	# Setting software version, build arch and source file name inside rpm spec
 	sed -i "s/Name:       /Name:       $(program_name)/" rpmbuild/SPECS/$(program_name).spec
-	sed -i "s/Version:    /Version:    $(version_major).$(version_minor).$(version_patch)/" rpmbuild/SPECS/$(program_name).spec
+	sed -i "s/Version:    /Version:    $(program_version)/" rpmbuild/SPECS/$(program_name).spec
 	sed -i "s/Summary:    /Summary:    $(description)/" rpmbuild/SPECS/$(program_name).spec
-	sed -i "s/Source0:    /Source0:    $(program_name)-$(version_major).$(version_minor).$(version_patch).tar.gz/" rpmbuild/SPECS/$(program_name).spec
+	sed -i "s/Source0:    /Source0:    $(program_name)-$(program_version).tar.gz/" rpmbuild/SPECS/$(program_name).spec
 	sed -i "s/BuildArch:  /BuildArch:  `uname -m`/" rpmbuild/SPECS/$(program_name).spec
 	# Build rpm
 	rpmbuild --define "_topdir `pwd`/rpmbuild" -ba rpmbuild/SPECS/$(program_name).spec
