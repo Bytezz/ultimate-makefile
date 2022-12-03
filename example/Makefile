@@ -152,7 +152,7 @@ dist-app: all
 	# ↓ Dependencies ↓
 	$(INSTALL_DATA) /usr/lib/x86_64-linux-gnu/libgtk-3.so $(program_name).AppDir/usr/lib/libgtk-3.so
 	# ↑ End dependencies ↑
-	echo "#!/bin/bash\ncdir=\$$(dirname \$$BASH_SOURCE)\n\$$cdir$(bindir)/$(program)" > $(program_name).AppDir/AppRun
+	echo -e "#!/bin/bash\ncdir=\$$(dirname \$$BASH_SOURCE)\n\$$cdir$(bindir)/$(program)" > $(program_name).AppDir/AppRun
 	chmod +x $(program_name).AppDir/AppRun
 	ARCH=`uname -m` appimagetool $(program_name).AppDir
 
